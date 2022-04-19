@@ -5,10 +5,10 @@ output "service_arn" {
 
 output "service_url" {
   description = "The App Runner Service URL"
-  value       = try(aws_apprunner_service.this.service_url, "")
+  value       = try(aws_apprunner_service.this[0].service_url, "")
 }
 
 output "service_status" {
   description = "The App Runner Service Status"
-  value       = try(aws_apprunner_service.this.status, "")
+  value       = try(aws_apprunner_service.this[0].status, "")
 }
