@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  name   = "hello-app-runner-public"
+  name   = "hello-app-runner"
   region = "us-east-1"
 
   tags = {
