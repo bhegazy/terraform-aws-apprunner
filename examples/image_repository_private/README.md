@@ -1,4 +1,4 @@
-# Code Repository Source Example
+# Image Repository Source Example for Private Repositories
 
 ## TODO
 
@@ -18,7 +18,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_code_repository_source"></a> [code\_repository\_source](#module\_code\_repository\_source) | ../../ | n/a |
+| <a name="module_image_repository_private"></a> [image\_repository\_private](#module\_image\_repository\_private) | ../../ | n/a |
 
 ## Resources
 

@@ -21,7 +21,7 @@ Make sure to run `terraform destroy` when you don't need these resources.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.10.0 |
 
 ## Providers
 
