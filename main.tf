@@ -1,7 +1,12 @@
 
-locals {
+variable "image_identifier" {
+  type    = string
+  default = ""
 }
-
+variable "image_configuration" {
+  type    = any
+  default = {}
+}
 resource "aws_apprunner_service" "this" {
   count = var.create ? 1 : 0
 
@@ -9,20 +14,18 @@ resource "aws_apprunner_service" "this" {
   #  auto_scaling_configuration_arn = aws_apprunner_auto_scaling_configuration_version.this.arn
 
   ## The source configuration for the application.
-  source_configuration {
-    auto_deployments_enabled = var.auto_deployments_enabled
+  ## Either code_repository or image_repository must be specified (but not both).
 
-    ## Either code_repository or image_repository must be specified (but not both).
-    ## Service From image source (docker)
-    dynamic "image_repository" {
-      for_each = var.image_repository != null && var.service_source_type == "image" ? [var.image_repository] : []
-      content {
-        image_identifier      = lookup(image_repository.value, "image_identifier", null)
+  ## Service From image source (image)
+  dynamic "source_configuration" {
+    for_each = var.service_source_type == "image" ? [1] : []
+    content {
+      auto_deployments_enabled = var.auto_deployments_enabled
+      image_repository {
+        image_identifier      = var.image_identifier
         image_repository_type = var.image_repository_type
         dynamic "image_configuration" {
-          for_each = lookup(image_repository.value, "image_configuration", null) != null ? [
-            image_repository.value.image_configuration
-          ] : []
+          for_each = var.image_configuration != null ? [var.image_configuration] : []
           content {
             port                          = lookup(image_configuration.value, "port", null)
             runtime_environment_variables = lookup(image_configuration.value, "runtime_environment_variables", null)
@@ -30,53 +33,54 @@ resource "aws_apprunner_service" "this" {
           }
         }
       }
-    }
-    ## Service From Code Source (git)
-    dynamic "code_repository" {
-      for_each = var.code_repository != null && var.service_source_type == "code" ? [var.code_repository] : []
-      content {
-        repository_url = lookup(code_repository.value, "repository_url", null)
-        source_code_version {
-          type  = lookup(code_repository.value, "source_code_version_type", null)
-          value = lookup(code_repository.value, "source_code_version_value", null)
+      ## access_role_arn required for only private ECR image repository type
+      ## connection_arn required for GitHub code repository type
+      dynamic "authentication_configuration" {
+        for_each = var.image_repository_type != "ECR_PUBLIC" ? [1] : []
+        content {
+          access_role_arn = var.access_role_arn
         }
-        dynamic "code_configuration" {
-          for_each = lookup(code_repository.value, "code_configuration", null) != null ? [
-            code_repository.value.code_configuration
-          ] : []
-          content {
-            configuration_source = lookup(code_configuration.value, "configuration_source", null)
-            dynamic "code_configuration_values" {
-              for_each = lookup(code_configuration.value, "code_configuration_values", null) != null ? [
-                code_configuration.value.code_configuration_values
-              ] : []
-              content {
-                runtime                       = lookup(code_configuration_values.value, "runtime", null)
-                build_command                 = lookup(code_configuration_values.value, "build_command", null)
-                port                          = lookup(code_configuration_values.value, "port", null)
-                start_command                 = lookup(code_configuration_values.value, "start_command", null)
-                runtime_environment_variables = lookup(code_configuration_values.value, "runtime_environment_variables", null)
-              }
-            }
-          }
-        }
-      }
-    }
-    ## access_role_arn required for only private ECR image repository type
-    ## connection_arn required for GitHub code repository type
-    dynamic "authentication_configuration" {
-      for_each = var.service_source_type == "image" && var.image_repository_type != "ECR_PUBLIC" ? [1] : []
-      content {
-        access_role_arn = var.access_role_arn
-      }
-    }
-    dynamic "authentication_configuration" {
-      for_each = var.service_source_type == "code" ? [1] : []
-      content {
-        connection_arn = var.create_apprunner_connection ? aws_apprunner_connection.this[0].arn : var.connection_arn
       }
     }
   }
+  ## Service From Code Source (git)
+  #    dynamic "code_repository" {
+  #      for_each = var.code_repository != null && var.service_source_type == "code" ? [var.code_repository] : []
+  #      content {
+  #        repository_url = lookup(code_repository.value, "repository_url", null)
+  #        source_code_version {
+  #          type  = lookup(code_repository.value, "source_code_version_type", null)
+  #          value = lookup(code_repository.value, "source_code_version_value", null)
+  #        }
+  #        dynamic "code_configuration" {
+  #          for_each = lookup(code_repository.value, "code_configuration", null) != null ? [
+  #            code_repository.value.code_configuration
+  #          ] : []
+  #          content {
+  #            configuration_source = lookup(code_configuration.value, "configuration_source", null)
+  #            dynamic "code_configuration_values" {
+  #              for_each = lookup(code_configuration.value, "code_configuration_values", null) != null ? [
+  #                code_configuration.value.code_configuration_values
+  #              ] : []
+  #              content {
+  #                runtime                       = lookup(code_configuration_values.value, "runtime", null)
+  #                build_command                 = lookup(code_configuration_values.value, "build_command", null)
+  #                port                          = lookup(code_configuration_values.value, "port", null)
+  #                start_command                 = lookup(code_configuration_values.value, "start_command", null)
+  #                runtime_environment_variables = lookup(code_configuration_values.value, "runtime_environment_variables", null)
+  #              }
+  #            }
+  #          }
+  #        }
+  #      }
+  #    }
+  #    dynamic "authentication_configuration" {
+  #      for_each = var.service_source_type == "code" ? [1] : []
+  #      content {
+  #        connection_arn = var.connection_arn != null ? var.connection_arn : ""
+  #      }
+  #    }
+  #  }
   ## Everything below is optional
 
   ## if App Runner will run On VPC
@@ -114,16 +118,5 @@ resource "aws_apprunner_service" "this" {
   #      memory = instance_configuration.value.memory
   #    }
   #  }
-  tags       = var.tags
-  depends_on = [aws_apprunner_connection.this]
-}
-
-## After creation, you must complete the authentication handshake using the App Runner console.
-resource "aws_apprunner_connection" "this" {
-  count = var.create && var.create_apprunner_connection && var.service_source_type == "code" ? 1 : 0
-
-  connection_name = "${var.service_name}-git-connection"
-  provider_type   = "GITHUB" ## only GITHUB provider type is supported
-
   tags = var.tags
 }

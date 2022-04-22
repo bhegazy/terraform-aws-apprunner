@@ -23,7 +23,6 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_apprunner_connection.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_connection) | resource |
 | [aws_apprunner_service.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_service) | resource |
 
 ## Inputs
@@ -36,6 +35,8 @@ No modules.
 | <a name="input_connection_arn"></a> [connection\_arn](#input\_connection\_arn) | The connection ARN to use for the App Runner service if the service\_source\_type is 'code' and create\_apprunner\_connection is false | `string` | `""` | no |
 | <a name="input_create"></a> [create](#input\_create) | Controls if App Runner resources should be created | `bool` | `true` | no |
 | <a name="input_create_apprunner_connection"></a> [create\_apprunner\_connection](#input\_create\_apprunner\_connection) | Whether to create apprunner connection or not | `bool` | `false` | no |
+| <a name="input_image_configuration"></a> [image\_configuration](#input\_image\_configuration) | n/a | `any` | `{}` | no |
+| <a name="input_image_identifier"></a> [image\_identifier](#input\_image\_identifier) | n/a | `string` | `""` | no |
 | <a name="input_image_repository"></a> [image\_repository](#input\_image\_repository) | Image Repository configuration block for the App Runner service. Either code\_repository or image\_repository must be specified (but not both). | `any` | `{}` | no |
 | <a name="input_image_repository_type"></a> [image\_repository\_type](#input\_image\_repository\_type) | The type of the image repository. This reflects the repository provider and whether the repository is private or public. Defaults to ECR | `string` | `"ECR"` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | App Runner service name | `string` | `""` | no |

@@ -10,6 +10,17 @@ locals {
   }
 }
 
+# Must complete the connection handshake in AWS App Runner Console while creating the resource.
+# if terraform apply failed, please re run again after completeing the connection handshake.
+resource "aws_apprunner_connection" "main" {
+
+  connection_name = "${local.name}-git-conn"
+  provider_type   = "GITHUB" ## only GITHUB provider type is supported
+
+  tags = local.tags
+}
+
+
 module "code_repository_source" {
   source = "../../"
   create = true
@@ -18,11 +29,10 @@ module "code_repository_source" {
   tags                = local.tags
   service_source_type = "code"
 
-  # Must complete the connection handshake in AWS App Runner Console while creating the resource.
-  # if terraform apply failed, please re run again after completeing the connection handshake.
-  create_apprunner_connection = true
+  connection_arn = aws_apprunner_connection.main.arn
 
   auto_deployments_enabled = true
+
   code_repository = {
     repository_url            = "https://github.com/bhegazy/apprunner-python-app"
     source_code_version_type  = "BRANCH"
@@ -42,4 +52,6 @@ module "code_repository_source" {
       #      }
     }
   }
+  depends_on = [aws_apprunner_connection.main]
+
 }
