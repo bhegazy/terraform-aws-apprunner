@@ -44,10 +44,10 @@ No modules.
 | <a name="input_image_identifier"></a> [image\_identifier](#input\_image\_identifier) | The identifier of an image. For an image in Amazon Elastic Container Registry (Amazon ECR), this is an image name. | `string` | `""` | no |
 | <a name="input_image_repository_type"></a> [image\_repository\_type](#input\_image\_repository\_type) | The type of the image repository. This reflects the repository provider and whether the repository is private or public. Defaults to ECR | `string` | `"ECR"` | no |
 | <a name="input_instance_configuration"></a> [instance\_configuration](#input\_instance\_configuration) | The instance configuration for the App Runner service | `map(string)` | `{}` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | The ARN of the custom KMS key to be used to encrypt the copy of source repository and service logs. By default, App Runner uses an AWS managed CMK | `string` | `""` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | App Runner service name | `string` | `""` | no |
 | <a name="input_service_source_type"></a> [service\_source\_type](#input\_service\_source\_type) | The service source type, valid values are 'code' or 'image' | `string` | `"image"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
-| <a name="input_use_vpc"></a> [use\_vpc](#input\_use\_vpc) | Whether to use a VPC for the App Runner service. Defaults to false. | `bool` | `false` | no |
 | <a name="input_vpc_connector_arn"></a> [vpc\_connector\_arn](#input\_vpc\_connector\_arn) | The ARN of the VPC connector to use for the App Runner service | `string` | `""` | no |
 
 ## Outputs

@@ -96,14 +96,11 @@ resource "aws_apprunner_service" "this" {
   ## Custom VPC
   network_configuration {
     egress_configuration {
-      egress_type       = var.use_vpc ? "VPC" : "DEFAULT"
-      vpc_connector_arn = var.use_vpc ? var.vpc_connector_arn : ""
+      egress_type       = var.vpc_connector_arn != null ? "VPC" : "DEFAULT"
+      vpc_connector_arn = var.vpc_connector_arn
     }
   }
-  #  dynamic "encryption_configuration" {
-  #    for_each = var.encryption_configuration
-  #    content {
-  #      kms_key = encryption_configuration.value.kms_key
-  #    }
-  #  }
+  encryption_configuration {
+    kms_key = var.kms_key_arn
+  }
 }

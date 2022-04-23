@@ -26,12 +26,6 @@ variable "service_source_type" {
   }
 }
 
-variable "use_vpc" {
-  description = "Whether to use a VPC for the App Runner service. Defaults to false."
-  type        = bool
-  default     = false
-}
-
 variable "vpc_connector_arn" {
   description = "The ARN of the VPC connector to use for the App Runner service"
   type        = string
@@ -55,6 +49,24 @@ variable "auto_scaling_configuration_arn" {
   type        = string
   default     = ""
 }
+
+variable "kms_key_arn" {
+  description = "The ARN of the custom KMS key to be used to encrypt the copy of source repository and service logs. By default, App Runner uses an AWS managed CMK"
+  type        = string
+  default     = ""
+}
+
+#variable "custom_domain_name" {
+#  description = "The custom domain endpoint to association. Specify a base domain e.g., example.com or a subdomain e.g., subdomain.example.com."
+#  type        = string
+#  default = ""
+#}
+#
+#variable "enable_www_subdomain" {
+#  description = "Whether to associate the subdomain with the App Runner service in addition to the base domain. Defaults to true"
+#  type        = bool
+#  default = true
+#}
 
 variable "tags" {
   description = "A map of tags to add to all resources"
