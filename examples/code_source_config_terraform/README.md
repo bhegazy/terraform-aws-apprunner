@@ -1,6 +1,6 @@
-# Image Repository Source Example for Private Repositories
+# Code Source Config in Terraform Example
+Deployment example if you want to config the app within terraform, `code_configuration_source = "API"`.
 
-## TODO
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -9,26 +9,24 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.10.0 |
-| <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.7.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_time"></a> [time](#provider\_time) | >= 0.7.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.10.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_image_repository_private"></a> [image\_repository\_private](#module\_image\_repository\_private) | ../../ | n/a |
-| <a name="module_image_repository_private_ecr_role"></a> [image\_repository\_private\_ecr\_role](#module\_image\_repository\_private\_ecr\_role) | terraform-aws-modules/iam/aws//modules/iam-assumable-role | ~> 4 |
+| <a name="module_code_repository_source"></a> [code\_repository\_source](#module\_code\_repository\_source) | ../../ | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [time_sleep.wait_role](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [aws_apprunner_connection.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_connection) | resource |
 
 ## Inputs
 

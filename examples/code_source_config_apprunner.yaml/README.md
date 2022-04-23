@@ -1,6 +1,5 @@
-# Code Repository Source Example
-
-## TODO
+# Code Source Config From Repo Example (apprunner.yaml)
+Deployment example if you want to use apprunner.yaml config from a git repository, `code_configuration_source = "REPOSITORY"`.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
