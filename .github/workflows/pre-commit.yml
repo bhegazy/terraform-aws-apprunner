@@ -1,10 +1,10 @@
 name: Pre-Commit
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [ main ]
 
 env:
   TERRAFORM_DOCS_VERSION: v0.16.0
