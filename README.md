@@ -1,5 +1,92 @@
 # AWS App Runner Module
-Terraform module which creates AWS AppRunner resources
+Terraform module which creates AWS AppRunner resources, currently only creates `aws_apprunner_service`, and have to provide arns for extra apprunner related resources.
+
+## Future Improvements Plan 
+- Support Custom VPC using [aws_apprunner_vpc_connector](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_vpc_connector) resource.
+- Support Custom autoscaling config using [aws_apprunner_auto_scaling_configuration_version](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_auto_scaling_configuration_version) resource.
+- Support custom domains using [aws_apprunner_custom_domain_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_custom_domain_association) resource.
+- Support creation of Github connection with [aws_apprunner_connection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apprunner_connection) resource.
+
+## Usage
+
+### The Official [AWS App Runner hello app](https://github.com/aws-containers/hello-app-runner) example that uses public ECR image source
+
+```hcl
+module "hello_app_runner" {
+  source = "bhegazy/terraform-aws-app-runner"
+
+  create = true
+  service_name             = "hello-app-runner"
+
+  tags = {
+    Name = "hello-app-runner"
+  }
+
+  service_source_type      = "image"
+  image_repository_type    = "ECR_PUBLIC"
+  image_identifier         = "public.ecr.aws/aws-containers/hello-app-runner:latest"
+  auto_deployments_enabled = false # Must set to false to disable auto deployment for ECR_PUBLIC type
+}
+```
+
+### Create App runner service from private image source (ECR) for example
+
+> Example uses [aws-app-runner-rust-example](https://github.com/bhegazy/aws-app-runner-rust-example)
+
+```hcl
+module "image_repository_private" {
+  source = "bhegazy/terraform-aws-app-runner"
+
+  create = true
+  service_name             = "my-service"
+
+  tags = {
+    Name = "my-service"
+  }
+
+  service_source_type      = "image"
+  auto_deployments_enabled = true
+  image_repository_type    = "ECR"
+  image_access_role_arn    = module.image_repository_private_ecr_role.iam_role_arn
+  image_identifier         = "112233445566.dkr.ecr.us-east-1.amazonaws.com/aws-app-runner-rust-example:latest"
+  image_configuration      = {
+    port                          = 8080
+    start_command                 = "./aws-app-runner-rust-example"
+    runtime_environment_variables = {
+      ENV_VAR_1 = "value1"
+      ENV_VAR_2 = "value2"
+    }
+  }
+}
+```
+
+### Create App runner service from code source that have an app config (`apprunner.yml` file).
+
+```hcl
+module "code_repository_source" {
+  source = "bhegazy/terraform-aws-app-runner"
+  
+  create = true
+  service_name             = "my-service"
+  
+  tags = {
+    Name = "my-service"
+  }
+  
+  service_source_type      = "code"
+  auto_deployments_enabled = true
+  code_connection_arn       = aws_apprunner_connection.main.arn
+  code_repository_url       = "https://github.com/bhegazy/apprunner-python-app"
+  code_version_type         = "BRANCH"
+  code_version_value        = "main"
+  code_configuration_source = "REPOSITORY"
+}
+```
+### Examples
+- [AWS App Runner Hello App](https://github.com/bhegazy/terraform-aws-apprunner/blob/main/examples/hello-app-runner)
+- [Complete Code Source](https://github.com/bhegazy/terraform-aws-apprunner/tree/main/examples/complete_code_source_api)
+- [Code Source with App Config (apprunner.yaml)](https://github.com/bhegazy/terraform-aws-apprunner/tree/main/examples/code_source_config_apprunner.yaml)
+- [Image Source (Private ECR)](https://github.com/bhegazy/terraform-aws-apprunner/tree/main/examples/image_repository_private)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
